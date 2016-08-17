@@ -14,14 +14,14 @@ if __name__ == '__main__':
   suite  = loader.loadTestsFromModule(pyxml2obj_in_test)
   suite.run(result)
   if not result.wasSuccessful():
-    print "unit tests for XMLin have failed!"
-    print "aborted to make a source distribution"
+    print("unit tests for XMLin have failed!")
+    print("aborted to make a source distribution")
     sys.exit(1)
   suite = loader.loadTestsFromModule(pyxml2obj_out_test)
   suite.run(result)
   if not result.wasSuccessful():
-    print "unit tests for XMLout have failed!"
-    print "aborted to make a source distribution"
+    print("unit tests for XMLout have failed!")
+    print("aborted to make a source distribution")
     sys.exit(1)
     
   # build distribution package
