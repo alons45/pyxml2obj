@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-from pyxml2obj import XMLin
+from pyxml2obj.pyxml2obj import XMLin
 
 class Xml2objInTest(unittest.TestCase):
 
