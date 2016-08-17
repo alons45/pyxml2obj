@@ -3,7 +3,7 @@
 
 import re
 import unittest
-from pyxml2obj import XMLin, XMLout
+from pyxml2obj.pyxml2obj import XMLin, XMLout
 
 class XML2objOutTest(unittest.TestCase):
   def testScalar(self):
