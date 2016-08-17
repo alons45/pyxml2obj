@@ -11,7 +11,7 @@ def XMLin(content, options={}):
   return obj.tree
 
 def XMLout(tree, options={}):
-  obj = xml2obj(options)p
+  obj = xml2obj(options)
   xml = obj.XMLout(tree)
   return xml
 
