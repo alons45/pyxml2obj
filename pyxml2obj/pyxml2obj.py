@@ -11,7 +11,7 @@ def XMLin(content, options={}):
   return obj.tree
 
 def XMLout(tree, options={}):
-  obj = xml2obj(options)
+  obj = xml2obj(options)p
   xml = obj.XMLout(tree)
   return xml
 
@@ -562,7 +562,7 @@ if __name__ == '__main__':
     </opt>
     '''
   opt = XMLin(xml, {'keyattr':{'car':'license', 'option':'pn'}, 'contentkey':'-content'})
-  print opt
+  print(opt)
 
   hash1 = {'one': 1, 'two': 'II', 'three': '...'}
   xml = XMLout(hash1)
