@@ -55,7 +55,7 @@ class xml2obj(ContentHandler):
     else:
       for key in KnownOptOut:
         known_opt[key] = key
-    
+
     row_opt = options
     self.opt = {}
 
@@ -77,10 +77,10 @@ class xml2obj(ContentHandler):
         self.opt['rootname'] = '';
     else:
       self.opt['rootname'] = DefRootName
-      
+
     if 'xmldecl' in self.opt and str(self.opt['xmldecl']) == '1':
       self.opt['xmldecl'] = DefXmlDecl
-      
+
     if 'contentkey' in self.opt:
       m = re.match('^-(.*)$', self.opt['contentkey'])
       if m:
@@ -88,7 +88,7 @@ class xml2obj(ContentHandler):
         self.opt['collapseagain'] = 1
     else:
       self.opt['contentkey'] = DefContentKey
-      
+
     if not 'normalizespace' in self.opt:
       self.opt['normalizespace'] = 0
 
@@ -163,24 +163,24 @@ class xml2obj(ContentHandler):
       elif key == '0':
         if re.match('^\s*$', val): # skip all whitespace content
           continue
-        
+
         # do variable substitutions
         if hasattr(self, '_var_values'):
           re.sub('\$\{(\w+)\}', lambda match: self.get_var(match.group(1)))
-          
+
         # look for variable definitions
         if 'varattr' in self.opt:
           var = self.opt['varattr']
-          if attr.has_key(var):
+          if var in attr:
             self.set_var(attr[var], val)
-            
+
         # collapse text content in element with no attributes to a string
         if not len(attr) and val == tree[-1]:
           return { self.opt['contentkey'] : val } if 'forcecontent' in self.opt else val
         key = self.opt['contentkey']
 
       # combine duplicate attributes
-      if attr.has_key(key):
+      if key in attr:
         if isinstance(attr[key], list):
           attr[key].append(val)
         else:
@@ -196,17 +196,17 @@ class xml2obj(ContentHandler):
           attr[key] = val
 
     # turn array into hash if key fields present
-    if self.opt.has_key('keyattr'):
+    if 'keyattr' in self.opt:
       for key, val in attr.items():
         if val and isinstance(val, list):
           attr[key] = self.array_to_hash(key, val)
 
     # disintermediate grouped tags
-    if self.opt.has_key('grouptags'):
+    if 'grouptags' in self.opt:
       for key, val in attr.items():
         if not (isinstance(val, dict) and len(val) == 1):
           continue
-        if not self.opt['grouptags'].has_key(key):
+        if not key in self.opt['grouptags']:
           continue
         child_key, child_val = val.popitem()
         if self.opt['grouptags'][key] == child_key:
@@ -214,19 +214,19 @@ class xml2obj(ContentHandler):
 
     # fold hashes containing a single anonymous array up into just the array
     count = len(attr)
-    if count == 1 and attr.has_key('anon') and isinstance(attr['anon'], list):
+    if count == 1 and 'anon' in attr and isinstance(attr['anon'], list):
       return attr['anon']
 
     # do the right thing if hash is empty otherwise just return it
-    if not len(attr) and self.opt.has_key('suppressempty'):
+    if not len(attr) and 'suppressempty' in self.opt:
       if self.opt['suppressempty'] == '':
         return ''
       return None
 
     # roll up named elements with named nested 'value' attributes
-    if self.opt.has_key('valueattr'):
+    if 'valueattr' in self.opt:
       for key, val in attr.items():
-        if not self.opt['valueattr'].has_key(key):
+        if not key in self.opt['valueattr']:
           continue
         if not (isinstance(val, dict) and len(val) == 1):
           continue
@@ -323,7 +323,7 @@ class xml2obj(ContentHandler):
 
     # extract rootname from top level if keeproot enabled
     if 'keeproot' in self.opt and self.opt['keeproot']:
-      keys = tree.keys()
+      keys = list(tree.keys())
       if len(tree) == 1:
         tree = tree[keys[0]]
         self.opt['rootname'] = keys[0]
@@ -344,7 +344,7 @@ class xml2obj(ContentHandler):
     del self._ancestors
     if 'xmldecl' in self.opt and self.opt['xmldecl']:
       xml = self.opt['xmldecl'] + '\n' + xml
-    
+
     return xml
 
   def value_to_xml(self, tree, name, indent):
@@ -381,7 +381,7 @@ class xml2obj(ContentHandler):
         for key, val in tree.items():
           if key in self.opt['grouptags']:
             tree[key] = { self.opt['grouptags'][key] : val }
-      
+
       nsdecls = ''
       default_ns_url = '';
       nested = []
@@ -474,7 +474,7 @@ class xml2obj(ContentHandler):
           break
 
     if len(hash) > 0:
-      tmp = hash.keys()
+      tmp = list(hash.keys())
       tmp.sort()
       key.extend(tmp)
     return key
@@ -504,11 +504,11 @@ class xml2obj(ContentHandler):
     result = orig.copy()
     result.update(dict(zip(extra[::2], extra[1::2])))
     return result
-      
+
   #
   # following methods overwrite ContentHandler
   #
-  
+
   def startDocument(self):
     self.lists = []
     self.curlist = self.tree = []
@@ -548,7 +548,7 @@ class xml2obj(ContentHandler):
 
 if __name__ == '__main__':
 #   opt = XMLin('''
-#     <opt> 
+#     <opt>
 #       <item key="item1" attr1="value1" attr2="value2" />
 #       <item key="item2" attr1="value3" attr2="value4" />
 #     </opt>
@@ -596,10 +596,3 @@ if __name__ == '__main__':
 
   tree = { 'one' : 1, 'content' : 'text' }
   xml = XMLout(tree)
-
-
-  
-  
-  
-
-  
